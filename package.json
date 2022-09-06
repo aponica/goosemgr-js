@@ -1,6 +1,6 @@
 {
   "name": "@aponica/goosemgr-js",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Abstract interface to a relational or object database.",
   "homepage": "https://aponica.com/docs/goosemgr-js/",
   "funding": "https://www.paypal.com/biz/fund?id=BEHTAS8WARM68",
