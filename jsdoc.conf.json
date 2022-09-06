@@ -1,0 +1,12 @@
+{
+  "opts": {
+    "destination": "../com-aponica/GENDOCS/goosemgr-js"
+    },
+  "plugins": [
+    "@aponica/jsdoc-plugin-linecomments",
+    "plugins/markdown"
+    ],
+  "source": {
+    "include": [ "./README.md", ".", "./lib" ]
+    }
+}
