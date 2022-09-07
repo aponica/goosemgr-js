@@ -34,7 +34,7 @@ test( 'ConnectThrowsOverrideMsg', fDone => {
 
 //-----------------------------------------------------------------------------
 
-test( 'DerivedClassMethods', async fDone => {
+test( 'DerivedClassMethods', async () => {
 
   class cDerivedClass extends kcGooseMgr {
     fiCreateConnection( hConfig ) {
@@ -82,8 +82,6 @@ test( 'DerivedClassMethods', async fDone => {
   catch ( iErr ) {
     expect( iErr ).toEqual( 'to never happen' );
     }
-
-  fDone();
 
   } ); // test(DerivedClassMethods)
 
