@@ -8,13 +8,38 @@
 
 const kcGooseMgr = require( '../lib/cGooseMgr.js' );
 
+class cNoGoose {}
+
+//-----------------------------------------------------------------------------
+
+function fiGooseMgr( vDefinitions ) {
+
+  class cDerivedClass extends kcGooseMgr {
+    fpvCreateConnection( vConfig ) {
+      return new Promise( fDone =>
+        fDone( { model: ( zModel, iSchema ) => ({ zModel, iSchema }) } )
+        );
+      } // fpCreateConnection
+    } // cDerivedClass
+
+  class noSchema {
+    constructor( hDef ) { this.hDef = hDef; }
+    }
+
+  cNoGoose.Schema = noSchema;
+
+  return new cDerivedClass( vDefinitions, cNoGoose );
+
+} // fiGooseMgr
+
+
 //-----------------------------------------------------------------------------
 
 test( 'ConnectThrowsOverrideMsg', fDone => {
 
-  const iGooseMgr = new kcGooseMgr( {}, class cNoGoose {} );
+  const iGooseMgr = new kcGooseMgr( {}, cNoGoose );
 
-  iGooseMgr.fiConnect( {} ).then( // promised
+  iGooseMgr.fpConnect( {} ).then( // promised
 
     vResult => { // resolved
       expect( vResult ).toEqual( '"to never happen"' );
@@ -24,7 +49,7 @@ test( 'ConnectThrowsOverrideMsg', fDone => {
     iErr => { // rejected
       expect( iErr ).toBeInstanceOf( Error );
       expect( iErr.message ).toEqual(
-        'cGooseMgr.fiCreateConnection() must be overridden!'  );
+        'cGooseMgr.fpvCreateConnection() must be overridden!'  );
       fDone();
       }
 
@@ -34,23 +59,28 @@ test( 'ConnectThrowsOverrideMsg', fDone => {
 
 //-----------------------------------------------------------------------------
 
-test( 'DerivedClassMethods', async () => {
+test( 'DefinitionsFromConfigFile', async () => {
 
-  class cDerivedClass extends kcGooseMgr {
-    fiCreateConnection( hConfig ) {
-      return new Promise( fDone =>
-        fDone( { model: ( zModel, iSchema ) => ({ zModel, iSchema }) } )
-        );
-      } // fiCreateConnection
-    } // cDerivedClass
+  try {
 
-  class noSchema {
-    constructor( hDef ) { this.hDef = hDef; }
+    const iGooseMgr = fiGooseMgr( 'tests-config/definitions.json' );
+
+    await iGooseMgr.fpConnect( {} );
+
+    const iModel = iGooseMgr.fiModel( 'tableA' );
+
+    expect( iModel ).toHaveProperty( 'zModel' );
+
+    }
+  catch ( iErr ) {
+    expect( iErr ).toEqual( 'to never happen' );
     }
 
-  class cNoGoose {}
+  } ); // test(DefinitionsFromConfigFile)
 
-  cNoGoose.Schema = noSchema;
+//-----------------------------------------------------------------------------
+
+test( 'DerivedClassMethods', async () => {
 
   try {
 
@@ -58,9 +88,9 @@ test( 'DerivedClassMethods', async () => {
 
     const hDefs = { '//' : {}, table1: hTable1 };
 
-    const iGooseMgr = new cDerivedClass( hDefs, cNoGoose );
+    const iGooseMgr = new fiGooseMgr( hDefs );
 
-    await iGooseMgr.fiConnect( {} );
+    await iGooseMgr.fpConnect( {} );
 
     expect( iGooseMgr.fiGoose() ).toBeInstanceOf( cNoGoose );
 
