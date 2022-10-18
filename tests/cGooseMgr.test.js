@@ -9,6 +9,7 @@
 const kcGooseMgr = require( '../lib/cGooseMgr.js' );
 
 class cNoGoose {}
+cNoGoose.POPULATE = 'POPULATE';
 
 //-----------------------------------------------------------------------------
 
@@ -91,6 +92,8 @@ test( 'DerivedClassMethods', async () => {
     const iGooseMgr = new fiGooseMgr( hDefs );
 
     await iGooseMgr.fpConnect( {} );
+
+    expect( iGooseMgr.fzPopulate() ).toBe( cNoGoose.POPULATE );
 
     expect( iGooseMgr.fiGoose() ).toBeInstanceOf( cNoGoose );
 
